@@ -1,3 +1,4 @@
+// src/main/java/com/example/backend/service/UserService.java
 package com.example.backend.service;
 
 import com.example.backend.dto.AuthResponse;
@@ -6,7 +7,6 @@ import com.example.backend.dto.RegisterRequest;
 import com.example.backend.models.User;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -41,12 +42,24 @@ public class UserService implements UserDetailsService {
         u.setEmail(req.email());
         u.setPassword(passwordEncoder.encode(req.password()));
         u.setTelefono(req.telefono());
-        u.setRol("Estudiante"); // ← rol por defecto
-        // u.setCodigo(...); // si querés generar un código, hacelo acá
+        u.setRol("Estudiante");
+        u.setCodigo(generateAlumnoCodeUnique());
+
         userRepository.save(u);
 
         String token = jwtService.generateToken(UserPrincipal.of(u));
         return new AuthResponse(token, u.getEmail(), u.getNombre(), u.getRol());
+    }
+
+    private String generateAlumnoCodeUnique() {
+        for (int i = 0; i < 20; i++) {
+            String candidate = String.format("%07d",
+                    ThreadLocalRandom.current().nextInt(0, 10_000_000));
+            if (!userRepository.existsByCodigo(candidate)) {
+                return candidate;
+            }
+        }
+        throw new IllegalStateException("No se pudo generar un código único para el alumno.");
     }
 
     public AuthResponse login(LoginRequest req) {
@@ -68,7 +81,6 @@ public class UserService implements UserDetailsService {
         return UserPrincipal.of(u);
     }
 
-    // Adaptador a UserDetails
     private record UserPrincipal(String username, String password, String role) implements UserDetails {
         static UserPrincipal of(User u) {
             String role = (u.getRol() == null || u.getRol().isBlank()) ? "Estudiante" : u.getRol();
