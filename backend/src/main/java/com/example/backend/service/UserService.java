@@ -1,12 +1,11 @@
 // src/main/java/com/example/backend/service/UserService.java
 package com.example.backend.service;
 
-import com.example.backend.dto.AuthResponse;
-import com.example.backend.dto.LoginRequest;
-import com.example.backend.dto.RegisterRequest;
+import com.example.backend.dto.*;
 import com.example.backend.models.User;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtService;
+import io.jsonwebtoken.JwtException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,12 +24,15 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
 
+    // REGISTER
     public AuthResponse register(RegisterRequest req) {
         if (userRepository.existsByEmail(req.email())) {
             throw new IllegalArgumentException("El email ya está registrado");
@@ -42,26 +44,17 @@ public class UserService implements UserDetailsService {
         u.setEmail(req.email());
         u.setPassword(passwordEncoder.encode(req.password()));
         u.setTelefono(req.telefono());
-        u.setRol("Estudiante");
-        u.setCodigo(generateAlumnoCodeUnique());
+        u.setRol("Estudiante");                 // rol por defecto
+        u.setCodigo(generateAlumnoCodeUnique()); // 7 dígitos
 
         userRepository.save(u);
 
-        String token = jwtService.generateToken(UserPrincipal.of(u));
-        return new AuthResponse(token, u.getEmail(), u.getNombre(), u.getRol());
+        String access = jwtService.generateToken(UserPrincipal.of(u));
+        String refresh = jwtService.generateRefreshToken(u.getEmail());
+        return new AuthResponse(access, refresh, u.getEmail(), u.getNombre(), u.getRol());
     }
 
-    private String generateAlumnoCodeUnique() {
-        for (int i = 0; i < 20; i++) {
-            String candidate = String.format("%07d",
-                    ThreadLocalRandom.current().nextInt(0, 10_000_000));
-            if (!userRepository.existsByCodigo(candidate)) {
-                return candidate;
-            }
-        }
-        throw new IllegalStateException("No se pudo generar un código único para el alumno.");
-    }
-
+    // LOGIN
     public AuthResponse login(LoginRequest req) {
         User u = userRepository.findByEmail(req.email())
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
@@ -70,15 +63,48 @@ public class UserService implements UserDetailsService {
             throw new BadCredentialsException("Credenciales inválidas");
         }
 
-        String token = jwtService.generateToken(UserPrincipal.of(u));
-        return new AuthResponse(token, u.getEmail(), u.getNombre(), u.getRol());
+        String access = jwtService.generateToken(UserPrincipal.of(u));
+        String refresh = jwtService.generateRefreshToken(u.getEmail());
+        return new AuthResponse(access, refresh, u.getEmail(), u.getNombre(), u.getRol());
     }
 
+    // REFRESH (stateless, sin BD extra)
+    public AuthResponse refresh(RefreshRequest req) {
+        String username;
+        try {
+            username = jwtService.extractUsernameFromRefresh(req.refreshToken());
+        } catch (JwtException e) {
+            throw new BadCredentialsException("Refresh token inválido");
+        }
+
+        User u = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        if (!jwtService.isRefreshValid(req.refreshToken(), u.getEmail())) {
+            throw new BadCredentialsException("Refresh token inválido o expirado");
+        }
+
+        String newAccess = jwtService.generateToken(UserPrincipal.of(u));
+        String newRefresh = jwtService.generateRefreshToken(u.getEmail());
+        return new AuthResponse(newAccess, newRefresh, u.getEmail(), u.getNombre(), u.getRol());
+    }
+
+    // UserDetailsService
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User u = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
         return UserPrincipal.of(u);
+    }
+
+    // helpers
+    private String generateAlumnoCodeUnique() {
+        for (int i = 0; i < 20; i++) {
+            String candidate = String.format("%07d",
+                    ThreadLocalRandom.current().nextInt(0, 10_000_000));
+            if (!userRepository.existsByCodigo(candidate)) return candidate;
+        }
+        throw new IllegalStateException("No se pudo generar un código único para el alumno.");
     }
 
     private record UserPrincipal(String username, String password, String role) implements UserDetails {
