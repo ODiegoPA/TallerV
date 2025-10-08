@@ -21,9 +21,9 @@ public class JwtService {
 
     public JwtService(
             @Value("${security.jwt.secret}") String accessSecret,
-            @Value("${security.jwt.expiration-ms:900000}") long accessExpMs,             // 15 min
-            @Value("${security.refresh.secret:${JWT_SECRET}}") String refreshSecret,     // usa el mismo si no defines otro
-            @Value("${security.refresh.expiration-ms:2592000000}") long refreshExpMs     // 30 días
+            @Value("${security.jwt.expiration-ms:900000}") long accessExpMs,
+            @Value("${security.refresh.secret:${JWT_SECRET}}") String refreshSecret,
+            @Value("${security.refresh.expiration-ms:2592000000}") long refreshExpMs
     ) {
         if (accessSecret == null || accessSecret.length() < 32)
             throw new IllegalStateException("security.jwt.secret debe tener >= 32 caracteres");
@@ -59,7 +59,6 @@ public class JwtService {
         return user.getUsername().equals(claims.getSubject()) && claims.getExpiration().after(new Date());
     }
 
-    // ===== REFRESH (stateless) =====
     public String generateRefreshToken(String username) {
         Date now = new Date();
         return Jwts.builder()

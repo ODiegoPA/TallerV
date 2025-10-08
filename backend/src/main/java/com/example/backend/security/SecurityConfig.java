@@ -23,15 +23,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> {}) // ← habilita CORS (usa el bean de CorsConfig)
+                .cors(cors -> {})
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Permitir preflight CORS
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // Públicos
                         .requestMatchers("/auth/register", "/auth/login", "/auth/refresh").permitAll()
-                        // Todo lo demás protegido
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

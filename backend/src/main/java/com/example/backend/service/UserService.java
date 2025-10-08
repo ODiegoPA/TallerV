@@ -44,8 +44,8 @@ public class UserService implements UserDetailsService {
         u.setEmail(req.email());
         u.setPassword(passwordEncoder.encode(req.password()));
         u.setTelefono(req.telefono());
-        u.setRol("Estudiante");                 // rol por defecto
-        u.setCodigo(generateAlumnoCodeUnique()); // 7 dígitos
+        u.setRol("Estudiante");
+        u.setCodigo(generateAlumnoCodeUnique());
 
         userRepository.save(u);
 
@@ -68,7 +68,7 @@ public class UserService implements UserDetailsService {
         return new AuthResponse(access, refresh, u.getEmail(), u.getNombre(), u.getRol());
     }
 
-    // REFRESH (stateless, sin BD extra)
+    // REFRESH
     public AuthResponse refresh(RefreshRequest req) {
         String username;
         try {
@@ -89,7 +89,7 @@ public class UserService implements UserDetailsService {
         return new AuthResponse(newAccess, newRefresh, u.getEmail(), u.getNombre(), u.getRol());
     }
 
-    // UserDetailsService
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User u = userRepository.findByEmail(email)
@@ -97,7 +97,6 @@ public class UserService implements UserDetailsService {
         return UserPrincipal.of(u);
     }
 
-    // helpers
     private String generateAlumnoCodeUnique() {
         for (int i = 0; i < 20; i++) {
             String candidate = String.format("%07d",
