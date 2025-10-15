@@ -9,15 +9,20 @@ import com.example.backend.models.User;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtService;
 import io.jsonwebtoken.JwtException;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -90,6 +95,22 @@ public class UserService implements UserDetailsService {
         String newAccess = jwtService.generateToken(UserPrincipal.of(u));
         String newRefresh = jwtService.generateRefreshToken(u.getEmail());
         return new AuthResponse(newAccess, newRefresh, u.getEmail(), u.getNombre(), u.getRol());
+    }
+    //ME
+    public Map<String, Object> me(Authentication auth) {
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No autenticado");
+        }
+
+        List<String> authorities = auth.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
+        return Map.of(
+                "name", auth.getName(),
+                "authorities", authorities
+        );
     }
 
 

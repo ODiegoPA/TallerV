@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/register", "/auth/login", "/auth/refresh").permitAll()
-                        .requestMatchers("/gestion", "/gestion/**").hasAuthority("ROLE_Administrador")
+                        .requestMatchers( "/gestion/**", "semestre/**").hasAuthority("ROLE_Administrador")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

@@ -37,19 +37,7 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public Map<String, Object> me(org.springframework.security.core.Authentication auth) {
-        if (auth == null || !auth.isAuthenticated()
-                || auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken) {
-            throw new org.springframework.web.server.ResponseStatusException(
-                    org.springframework.http.HttpStatus.UNAUTHORIZED, "No autenticado");
-        }
-        var authorities = auth.getAuthorities().stream()
-                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
-                .toList();
-
-        return java.util.Map.of(
-                "name", auth.getName(),
-                "authorities", authorities
-        );
+    public Map<String, Object> me(Authentication auth) {
+        return userService.me(auth);
     }
 }
