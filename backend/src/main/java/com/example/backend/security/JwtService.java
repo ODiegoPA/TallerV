@@ -82,4 +82,14 @@ public class JwtService {
                 && expectedUsername.equals(claims.getSubject())
                 && claims.getExpiration().after(new Date());
     }
+
+    private Claims parseAccessClaims(String token) throws JwtException {
+        return Jwts.parserBuilder().setSigningKey(accessKey).build()
+                .parseClaimsJws(token).getBody();
+    }
+
+    public Object extractClaim(String token, String name) throws JwtException {
+        return parseAccessClaims(token).get(name);
+    }
+
 }

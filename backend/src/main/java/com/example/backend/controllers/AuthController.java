@@ -1,10 +1,17 @@
 package com.example.backend.controllers;
 
-import com.example.backend.dto.*;
+import com.example.backend.dto.user.AuthResponse;
+import com.example.backend.dto.user.LoginRequest;
+import com.example.backend.dto.user.RefreshRequest;
+import com.example.backend.dto.user.RegisterRequest;
 import com.example.backend.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,5 +34,22 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest req) {
         return ResponseEntity.ok(userService.refresh(req));
+    }
+
+    @GetMapping("/me")
+    public Map<String, Object> me(org.springframework.security.core.Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()
+                || auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.UNAUTHORIZED, "No autenticado");
+        }
+        var authorities = auth.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .toList();
+
+        return java.util.Map.of(
+                "name", auth.getName(),
+                "authorities", authorities
+        );
     }
 }

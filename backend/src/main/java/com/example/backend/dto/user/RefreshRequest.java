@@ -1,3 +1,3 @@
-package com.example.backend.dto;
+package com.example.backend.dto.user;
 
 public record RefreshRequest(String refreshToken) {}

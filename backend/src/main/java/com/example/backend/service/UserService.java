@@ -1,7 +1,10 @@
 // src/main/java/com/example/backend/service/UserService.java
 package com.example.backend.service;
 
-import com.example.backend.dto.*;
+import com.example.backend.dto.user.AuthResponse;
+import com.example.backend.dto.user.LoginRequest;
+import com.example.backend.dto.user.RefreshRequest;
+import com.example.backend.dto.user.RegisterRequest;
 import com.example.backend.models.User;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtService;
@@ -44,7 +47,7 @@ public class UserService implements UserDetailsService {
         u.setEmail(req.email());
         u.setPassword(passwordEncoder.encode(req.password()));
         u.setTelefono(req.telefono());
-        u.setRol("Estudiante");
+        u.setRol(req.rol());
         u.setCodigo(generateAlumnoCodeUnique());
 
         userRepository.save(u);
