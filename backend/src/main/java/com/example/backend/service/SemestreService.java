@@ -27,8 +27,9 @@ public class SemestreService {
         Semestre s = semestreRepository.findById(id).orElseThrow();
         Gestion g = s.getGestion();
 
+
         GestionLiteDto gLite = new GestionLiteDto(g.getId(), g.getAno());
-        return new SemestreResponseDto(s.getId(), s.getNombre(), gLite);
+        return new SemestreResponseDto(s.getId(), s.getNombre(), gLite, s.getFechaInicio(), s.getFechaFin());
     }
     public List<SemestreResponseDto> getAll() {
         List<Semestre> semestres = semestreRepository.findAll();
@@ -39,6 +40,8 @@ public class SemestreService {
         Semestre s = new Semestre();
         s.setNombre(dto.nombre());
         s.setGestion(g);
+        s.setFechaInicio(dto.fechaInicio());
+        s.setFechaFin(dto.fechaFin());
         semestreRepository.save(s);
         return toDto(semestreRepository.findById(s.getId()).orElse(s));
     }
@@ -50,6 +53,8 @@ public class SemestreService {
         Gestion g = gestionRepository.findById(dto.gestionId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Gestión " + dto.gestionId() + " no encontrada"));
         s.setGestion(g);
+        s.setFechaInicio(dto.fechaInicio());
+        s.setFechaFin(dto.fechaFin());
         semestreRepository.save(s);
         return toDto(semestreRepository.findById(s.getId()).orElse(s));
     }
@@ -60,8 +65,8 @@ public class SemestreService {
     }
     private SemestreResponseDto toDto(Semestre s) {
         Gestion g = s.getGestion();
-        GestionLiteDto gLite = new GestionLiteDto(g.getId(), g.getAno()); // usa getAnio() si así se llama
-        return new SemestreResponseDto(s.getId(), s.getNombre(), gLite);
+        GestionLiteDto gLite = new GestionLiteDto(g.getId(), g.getAno());
+        return new SemestreResponseDto(s.getId(), s.getNombre(), gLite, s.getFechaInicio(), s.getFechaFin());
     }
 
 }

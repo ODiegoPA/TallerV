@@ -23,19 +23,22 @@ public class GestionService {
     public GestionResponseDto getGestion(Long id){
         Gestion g = gestionRepository.findById(id).orElseThrow();
         List<SemestreLiteDto> semestres = g.getSemestres().stream().map
-                (s -> new SemestreLiteDto(s.getId(), s.getNombre())).toList();
+                (s -> new SemestreLiteDto(s.getId(), s.getNombre(), s.getFechaInicio(), s.getFechaFin())).toList();
         return new GestionResponseDto(g.getId(), g.getAno(), semestres);
     }
+
     public List<GestionResponseDto> getAll() {
         List<Gestion> gestiones = gestionRepository.findAll();
         return gestiones.stream().map(this::toDto).toList();
     }
+
     public GestionResponseDto create(GestionRequestDto dto) {
         Gestion g = new Gestion();
         g.setAno(dto.ano());
         gestionRepository.save(g);
         return toDto(gestionRepository.findById(g.getId()).orElse(g));
     }
+
     public GestionResponseDto update(Long id, GestionRequestDto dto) {
         Gestion g = gestionRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Gestión " + id + " no encontrada")
@@ -44,6 +47,7 @@ public class GestionService {
         gestionRepository.save(g);
         return toDto(gestionRepository.findById(g.getId()).orElse(g));
     }
+
     public void delete(Long id) {
         Gestion g = gestionRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Gestión " + id + " no encontrada")
@@ -63,6 +67,6 @@ public class GestionService {
     }
 
     private SemestreLiteDto toLite(Semestre s) {
-        return new SemestreLiteDto(s.getId(), s.getNombre());
+        return new SemestreLiteDto(s.getId(), s.getNombre(), s.getFechaInicio(), s.getFechaFin());
     }
 }

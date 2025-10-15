@@ -1,4 +1,6 @@
 package com.example.backend.dto.semestre;
 
-public record SemestreRequestDto (String nombre, Long gestionId) {
+import java.time.LocalDate;
+
+public record SemestreRequestDto (String nombre, Long gestionId, LocalDate fechaInicio, LocalDate fechaFin) {
 }
