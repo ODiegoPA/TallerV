@@ -49,14 +49,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails user = userDetailsService.loadUserByUsername(username);
             if (jwtService.isAccessValid(token, user)) {
-                String rawRol = (String) jwtService.extractClaim(token, "role"); // <--- usa "role"
+                String rawRol = (String) jwtService.extractClaim(token, "role");
                 if (rawRol == null) rawRol = (String) jwtService.extractClaim(token, "rol");
 
                 String authority = mapRolToAuthority(rawRol);
 
                 List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(authority));
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(user, null, authorities); // <--- usa 'authorities'
+                        new UsernamePasswordAuthenticationToken(user, null, authorities);
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }

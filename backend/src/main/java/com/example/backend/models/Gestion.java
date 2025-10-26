@@ -29,6 +29,15 @@ public class Gestion {
     @JsonManagedReference
     public List<Semestre> semestres = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "gestion",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @JsonManagedReference
+    public List<Modalidad> modalidades = new ArrayList<>();
+
     public void addSemestre(Semestre s) {
         semestres.add(s);
         s.setGestion(this);
@@ -60,5 +69,13 @@ public class Gestion {
 
     public void setSemestres(List<Semestre> semestres) {
         this.semestres = semestres;
+    }
+
+    public List<Modalidad> getModalidades() {
+        return modalidades;
+    }
+
+    public void setModalidades(List<Modalidad> modalidades) {
+        this.modalidades = modalidades;
     }
 }
