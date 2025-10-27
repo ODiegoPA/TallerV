@@ -1,12 +1,15 @@
 package com.example.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -31,6 +34,15 @@ public class Semestre {
     @JoinColumn(name = "gestion_id", nullable = false)
     @JsonBackReference
     public Gestion gestion;
+
+    @OneToMany(
+            mappedBy = "semestre",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @JsonManagedReference
+    public List<Materia> materias = new ArrayList<>();
 
     public void setId(Long id) {
         this.id = id;

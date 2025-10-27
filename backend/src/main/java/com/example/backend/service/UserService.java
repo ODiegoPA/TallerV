@@ -1,10 +1,7 @@
 // src/main/java/com/example/backend/service/UserService.java
 package com.example.backend.service;
 
-import com.example.backend.dto.user.AuthResponse;
-import com.example.backend.dto.user.LoginRequest;
-import com.example.backend.dto.user.RefreshRequest;
-import com.example.backend.dto.user.RegisterRequest;
+import com.example.backend.dto.user.*;
 import com.example.backend.models.User;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.JwtService;
@@ -112,6 +109,20 @@ public class UserService implements UserDetailsService {
                 "authorities", authorities
         );
     }
+    public List<UserDto> getAllUsersByRole(RolRequestDto req) {
+        String role;
+        if (req == null) {
+            role = null;
+        } else {
+            role = req.rol();
+        }
+        if (role == null || role.isBlank()) {
+            List<User> users = userRepository.findAll();
+            return users.stream().map(this::toDto).toList();
+        }
+        List<User> users = userRepository.findAllByRol(role);
+        return users.stream().map(this::toDto).toList();
+    }
 
 
     @Override
@@ -144,5 +155,17 @@ public class UserService implements UserDetailsService {
         @Override public boolean isAccountNonLocked() { return true; }
         @Override public boolean isCredentialsNonExpired() { return true; }
         @Override public boolean isEnabled() { return true; }
+    }
+
+    private UserDto toDto(User u) {
+        return new UserDto(
+                u.getId(),
+                u.getNombre(),
+                u.getApellido(),
+                u.getEmail(),
+                u.getTelefono(),
+                u.getRol(),
+                u.getCodigo()
+        );
     }
 }

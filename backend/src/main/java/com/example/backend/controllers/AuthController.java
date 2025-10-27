@@ -1,9 +1,6 @@
 package com.example.backend.controllers;
 
-import com.example.backend.dto.user.AuthResponse;
-import com.example.backend.dto.user.LoginRequest;
-import com.example.backend.dto.user.RefreshRequest;
-import com.example.backend.dto.user.RegisterRequest;
+import com.example.backend.dto.user.*;
 import com.example.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -39,5 +36,10 @@ public class AuthController {
     @GetMapping("/me")
     public Map<String, Object> me(Authentication auth) {
         return userService.me(auth);
+    }
+
+    @GetMapping("/usuarios")
+    public List<UserDto> findUsersByRole(@RequestBody(required = false) RolRequestDto rol) {
+        return userService.getAllUsersByRole(rol);
     }
 }
