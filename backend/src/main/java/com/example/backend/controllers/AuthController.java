@@ -38,7 +38,7 @@ public class AuthController {
         return userService.me(auth);
     }
 
-    @GetMapping("/usuarios")
+    @PostMapping("/usuarios")
     public List<UserDto> findUsersByRole(@RequestBody(required = false) RolRequestDto rol) {
         return userService.getAllUsersByRole(rol);
     }

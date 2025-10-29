@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -36,7 +38,7 @@ public class Gestion {
             fetch = FetchType.LAZY
     )
     @JsonManagedReference
-    public List<Modalidad> modalidades = new ArrayList<>();
+    public Set<Modalidad> modalidades = new HashSet<>();
 
     public void addSemestre(Semestre s) {
         semestres.add(s);
@@ -71,11 +73,11 @@ public class Gestion {
         this.semestres = semestres;
     }
 
-    public List<Modalidad> getModalidades() {
+    public Set<Modalidad> getModalidades() {
         return modalidades;
     }
 
-    public void setModalidades(List<Modalidad> modalidades) {
+    public void setModalidades(Set<Modalidad> modalidades) {
         this.modalidades = modalidades;
     }
 }
