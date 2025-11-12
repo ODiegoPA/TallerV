@@ -30,7 +30,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/register", "/auth/login", "/auth/refresh").permitAll()
                         .requestMatchers( "/gestion/**", "semestre/**", "/materia/**" , "/gestion/**").hasAuthority("ROLE_Administrador")
-
+                        .requestMatchers("/matriculacion/**", "/nota/**","/semestre-materia/**").hasAnyAuthority("ROLE_Administrador", "ROLE_Docente")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
