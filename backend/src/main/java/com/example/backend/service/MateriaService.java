@@ -17,13 +17,9 @@ import java.util.List;
 @Service
 public class MateriaService {
     private final MateriaRepository materiaRepository;
-    private final SemestreRepository semestreRepository;
-    private final UserRepository userRepository;
 
     public MateriaService(MateriaRepository materiaRepository, SemestreService semestreService, UserService userService, SemestreRepository semestreRepository, UserRepository userRepository) {
         this.materiaRepository = materiaRepository;
-        this.semestreRepository = semestreRepository;
-        this.userRepository = userRepository;
     }
 
     public MateriaResponseDto getMateria(Long id){
