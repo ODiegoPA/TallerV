@@ -20,13 +20,10 @@ public class Materia {
     @Column
     public String nombre;
 
-    @ManyToMany
-    @JoinTable(
-            name="semestre-materia",
-            joinColumns = @JoinColumn(name="materia_id"),
-            inverseJoinColumns = @JoinColumn(name="semestre_id")
-    )
-    public List<Semestre> semestres;
+    @OneToMany(mappedBy = "materia")
+    @JsonBackReference
+    private List<SemestreMateria> semestreMaterias;
+
 
     public long getId() {
         return id;
@@ -44,11 +41,11 @@ public class Materia {
         this.nombre = nombre;
     }
 
-    public List<Semestre> getSemestres() {
-        return semestres;
+    public List<SemestreMateria> getSemestreMaterias() {
+        return semestreMaterias;
     }
 
-    public void setSemestres(List<Semestre> semestres) {
-        this.semestres = semestres;
+    public void setSemestreMaterias(List<SemestreMateria> semestreMaterias) {
+        this.semestreMaterias = semestreMaterias;
     }
 }

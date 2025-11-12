@@ -35,15 +35,11 @@ public class Semestre {
     @JsonBackReference
     public Gestion gestion;
 
-    @ManyToMany(mappedBy = "semestres")
+    @OneToMany(mappedBy = "semestre")
     @JsonBackReference
-    public List<Materia> materias = new ArrayList<>();
+    private List<SemestreMateria> semestreMaterias;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
@@ -81,5 +77,13 @@ public class Semestre {
 
     public void setGestion(Gestion gestion) {
         this.gestion = gestion;
+    }
+
+    public List<SemestreMateria> getSemestreMaterias() {
+        return semestreMaterias;
+    }
+
+    public void setSemestreMaterias(List<SemestreMateria> semestreMaterias) {
+        this.semestreMaterias = semestreMaterias;
     }
 }

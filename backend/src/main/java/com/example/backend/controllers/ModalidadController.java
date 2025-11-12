@@ -6,6 +6,8 @@ import com.example.backend.service.ModalidadService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/modalidad")
 public class ModalidadController {
@@ -22,7 +24,7 @@ public class ModalidadController {
     }
 
     @GetMapping("/")
-    public java.util.List<ModalidadResponseDto> getAll() {
+    public List<ModalidadResponseDto> getAll() {
         return modalidadService.getAll();
     }
 
@@ -40,5 +42,10 @@ public class ModalidadController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         modalidadService.delete(id);
+    }
+
+    @GetMapping("/gestion/{gestionId}")
+    public java.util.List<ModalidadResponseDto> getByGestion(@PathVariable Long gestionId) {
+        return modalidadService.getByGestion(gestionId);
     }
 }

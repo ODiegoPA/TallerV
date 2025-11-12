@@ -36,6 +36,11 @@ public class ModalidadService {
         List<Modalidad> modalidades = modalidadRepository.findAll();
         return modalidades.stream().map(this::toDto).toList();
     }
+    public List<ModalidadResponseDto> getByGestion(Long gestionId) {
+        Gestion g = gestionRepository.findById(gestionId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Gestion " + gestionId + " no encontrada"));
+        List<Modalidad> modalidades = modalidadRepository.findByGestionId(g.id);
+        return modalidades.stream().map(this::toDto).toList();
+    }
 
     public ModalidadResponseDto create(ModalidadRequestDto dto){
         Gestion g = gestionRepository.findById(dto.gestionId()).orElseThrow();
@@ -61,6 +66,8 @@ public class ModalidadService {
         Modalidad m = modalidadRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Modalidad " + id + " no encontrada"));
         modalidadRepository.delete(m);
     }
+
+
     private ModalidadResponseDto toDto(Modalidad d) {
         Gestion g = d.getGestion();
         GestionLiteDto gLite = new GestionLiteDto(g.getId(), g.getAno());
