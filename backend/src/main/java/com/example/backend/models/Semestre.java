@@ -35,13 +35,8 @@ public class Semestre {
     @JsonBackReference
     public Gestion gestion;
 
-    @OneToMany(
-            mappedBy = "semestre",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY
-    )
-    @JsonManagedReference
+    @ManyToMany(mappedBy = "semestres")
+    @JsonBackReference
     public List<Materia> materias = new ArrayList<>();
 
     public void setId(Long id) {

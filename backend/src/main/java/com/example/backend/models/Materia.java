@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,22 +20,13 @@ public class Materia {
     @Column
     public String nombre;
 
-
-    @Column
-    public Integer cupos;
-
-    @Column
-    public String estado;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "semestre_id", nullable = false)
-    @JsonBackReference
-    public Semestre semestre;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "docente_id", nullable = false)
-    @JsonBackReference
-    public User docente;
+    @ManyToMany
+    @JoinTable(
+            name="semestre-materia",
+            joinColumns = @JoinColumn(name="materia_id"),
+            inverseJoinColumns = @JoinColumn(name="semestre_id")
+    )
+    public List<Semestre> semestres;
 
     public long getId() {
         return id;
@@ -51,35 +44,11 @@ public class Materia {
         this.nombre = nombre;
     }
 
-    public String getEstado() {
-        return estado;
+    public List<Semestre> getSemestres() {
+        return semestres;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public Integer getCupos() {
-        return cupos;
-    }
-
-    public void setCupos(Integer cupos) {
-        this.cupos = cupos;
-    }
-
-    public Semestre getSemestre() {
-        return semestre;
-    }
-
-    public void setSemestre(Semestre semestre) {
-        this.semestre = semestre;
-    }
-
-    public User getDocente() {
-        return docente;
-    }
-
-    public void setDocente(User docente) {
-        this.docente = docente;
+    public void setSemestres(List<Semestre> semestres) {
+        this.semestres = semestres;
     }
 }

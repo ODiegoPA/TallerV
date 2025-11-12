@@ -4,4 +4,4 @@ import com.example.backend.dto.gestion.GestionLiteDto;
 import com.example.backend.dto.semestre.SemestreLiteDto;
 import com.example.backend.dto.user.UserLiteDto;
 
-public record MateriaResponseDto (Long id, String nombre, Integer cupos, String estado, SemestreLiteDto semestre, UserLiteDto docente){}
+public record MateriaResponseDto (Long id, String nombre){}

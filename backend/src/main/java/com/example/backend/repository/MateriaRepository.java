@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface MateriaRepository extends JpaRepository<Materia, Long> {
-    @EntityGraph(attributePaths = {"semestre", "docente"})
+    @EntityGraph(attributePaths = {"semestres"})
     Optional<Materia> findById(@Param("id") Long id);
 }
