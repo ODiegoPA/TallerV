@@ -1,6 +1,9 @@
 package com.example.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class SemestreMateria {
@@ -25,7 +28,14 @@ public class SemestreMateria {
     @JoinColumn(name="modalidad_id")
     private Modalidad modalidad;
 
+    @OneToMany(mappedBy = "semestreMateria")
+    @JsonBackReference
+    private List<Matriculacion> matriculaciones;
+
+    @Column
     private Integer cupos;
+
+    @Column
     private boolean estaActiva;
 
     public Long getId() {
@@ -83,5 +93,13 @@ public class SemestreMateria {
 
     public void setModalidad(Modalidad modalidad) {
         this.modalidad = modalidad;
+    }
+
+    public List<Matriculacion> getMatriculaciones() {
+        return matriculaciones;
+    }
+
+    public void setMatriculaciones(List<Matriculacion> matriculaciones) {
+        this.matriculaciones = matriculaciones;
     }
 }

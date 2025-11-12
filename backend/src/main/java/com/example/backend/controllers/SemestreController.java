@@ -6,6 +6,8 @@ import com.example.backend.service.SemestreService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/semestre")
 public class SemestreController {
@@ -22,7 +24,7 @@ public class SemestreController {
     }
 
     @GetMapping("/")
-    public java.util.List<SemestreResponseDto> getAll(){
+    public List<SemestreResponseDto> getAll(){
         return semestreService.getAll();
     }
 
