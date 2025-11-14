@@ -34,6 +34,11 @@ public class SemestreMateriaController {
         return semestreMateriaService.getSemestreMateria(id);
     }
 
+    @GetMapping("/docente/{docenteId}")
+    public List<SemestreMateriaResponseDto> getByDocente(@PathVariable Long docenteId) {
+        return semestreMateriaService.getByDocente(docenteId);
+    }
+
     @PutMapping("/{id}")
     public SemestreMateriaResponseDto update(@PathVariable Long id, @RequestBody SemestreMateriaRequestDTO dto) {
         return semestreMateriaService.update(id, dto);

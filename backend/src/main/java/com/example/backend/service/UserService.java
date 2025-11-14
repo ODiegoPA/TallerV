@@ -37,7 +37,6 @@ public class UserService implements UserDetailsService {
         this.jwtService = jwtService;
     }
 
-    // REGISTER
     public AuthResponse register(RegisterRequest req) {
         if (userRepository.existsByEmail(req.email())) {
             throw new IllegalArgumentException("El email ya está registrado");

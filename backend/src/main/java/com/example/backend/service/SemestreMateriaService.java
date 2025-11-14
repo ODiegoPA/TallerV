@@ -48,6 +48,11 @@ public class SemestreMateriaService {
         return semestreMaterias.stream().map(this::toDto).toList();
     }
 
+    public List<SemestreMateriaResponseDto> getByDocente(Long docenteId){
+        List<SemestreMateria> semestreMaterias = semestreMateriaRepository.findByDocenteId(docenteId);
+        return semestreMaterias.stream().map(this::toDto).toList();
+    }
+
     public SemestreMateriaResponseDto create(SemestreMateriaRequestDTO dto){
         Materia m = materiaRepository.findById(dto.materiaId()).orElseThrow();
         Semestre s = semestreRepository.findById(dto.semestreId()).orElseThrow();
