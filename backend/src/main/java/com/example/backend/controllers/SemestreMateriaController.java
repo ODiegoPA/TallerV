@@ -5,6 +5,7 @@ import com.example.backend.dto.semestreMateria.SemestreMateriaResponseDto;
 import com.example.backend.service.SemestreMateriaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,9 +35,9 @@ public class SemestreMateriaController {
         return semestreMateriaService.getSemestreMateria(id);
     }
 
-    @GetMapping("/docente/{docenteId}")
-    public List<SemestreMateriaResponseDto> getByDocente(@PathVariable Long docenteId) {
-        return semestreMateriaService.getByDocente(docenteId);
+    @GetMapping("/docente/materias")
+    public List<SemestreMateriaResponseDto> getByDocente(Authentication authentication) {
+        return semestreMateriaService.getByDocente(authentication);
     }
 
     @PutMapping("/{id}")

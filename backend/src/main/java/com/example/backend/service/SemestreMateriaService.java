@@ -8,6 +8,7 @@ import com.example.backend.dto.semestreMateria.SemestreMateriaResponseDto;
 import com.example.backend.dto.user.UserLiteDto;
 import com.example.backend.models.*;
 import com.example.backend.repository.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,8 +49,14 @@ public class SemestreMateriaService {
         return semestreMaterias.stream().map(this::toDto).toList();
     }
 
-    public List<SemestreMateriaResponseDto> getByDocente(Long docenteId){
-        List<SemestreMateria> semestreMaterias = semestreMateriaRepository.findByDocenteId(docenteId);
+    public List<SemestreMateriaResponseDto> getByDocente(Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new RuntimeException("No autenticado");
+        }
+        String email = auth.getName();
+        User docente = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        List<SemestreMateria> semestreMaterias = semestreMateriaRepository.findByDocenteId(docente.getId());
         return semestreMaterias.stream().map(this::toDto).toList();
     }
 
