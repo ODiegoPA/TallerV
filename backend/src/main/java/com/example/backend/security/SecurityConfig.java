@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/auth/register", "/auth/login", "/auth/refresh").permitAll()
+                        .requestMatchers("/auth/register", "/auth/login", "/auth/refresh","/matriculacion/alumno/**","nota/matriculacion/**").permitAll()
                         .requestMatchers( "/gestion/**", "semestre/**", "/materia/**" , "/gestion/**").hasAuthority("ROLE_Administrador")
                         .requestMatchers("/matriculacion/**", "/nota/**","/semestre-materia/**").hasAnyAuthority("ROLE_Administrador", "ROLE_Docente")
                         .anyRequest().authenticated()
