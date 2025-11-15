@@ -5,6 +5,7 @@ import com.example.backend.dto.matriculacion.MatriculacionResponseDto;
 import com.example.backend.dto.nota.ValorRequestDto;
 import com.example.backend.service.MatriculacionService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,9 +29,9 @@ public class MatriculacionController {
         return matriculacionService.getBySemestreMateriaId(semestreMateriaId);
     }
 
-    @GetMapping("/alumno/{alumnoId}")
-    public List<MatriculacionResponseDto> getByAlumnoId(@PathVariable Long alumnoId) {
-        return matriculacionService.getByAlumnoId(alumnoId);
+    @GetMapping("/alumno")
+    public List<MatriculacionResponseDto> getByAlumnoId(Authentication authentication) {
+        return matriculacionService.getByAlumno(authentication);
     }
 
     @PostMapping("/")

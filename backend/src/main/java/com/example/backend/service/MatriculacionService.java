@@ -7,6 +7,7 @@ import com.example.backend.dto.nota.ValorRequestDto;
 import com.example.backend.dto.user.UserLiteDto;
 import com.example.backend.models.*;
 import com.example.backend.repository.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -57,8 +58,14 @@ public class MatriculacionService {
         return matriculaciones.stream().map(this::toDto).toList();
     }
 
-    public List<MatriculacionResponseDto> getByAlumnoId(Long alumnoId) {
-        List<Matriculacion> matriculaciones = matriculacionRepository.findByAlumno_Id(alumnoId);
+    public List<MatriculacionResponseDto> getByAlumno(Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new RuntimeException("No autenticado");
+        }
+        String email = auth.getName();
+        User alumno = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        List<Matriculacion> matriculaciones = matriculacionRepository.findByAlumno_Id(alumno.getId());
         return matriculaciones.stream().map(this::toDto).toList();
     }
 
